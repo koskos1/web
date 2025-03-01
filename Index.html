@@ -3,40 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KOSKOS</title>
+    <title>KOSKOS - Kalkulačky</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f0f4f8;
             color: #333;
             text-align: center;
         }
         .header {
-            background-color: #2e7d32;
+            background-color: #4CAF50;
             padding: 20px;
             color: white;
             cursor: pointer;
-        }
-        .logo {
-            max-width: 200px;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         .nav {
             display: flex;
             justify-content: center;
+            flex-wrap: wrap;
             gap: 20px;
             padding: 10px;
-            background-color: #388e3c;
+            background-color: #66BB6A;
+            border-radius: 20px;
+            margin: 20px auto;
+            width: 80%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
         .nav a {
             color: white;
             text-decoration: none;
-            padding: 10px 15px;
-            transition: background 0.3s;
+            padding: 12px 20px;
+            transition: background 0.3s, transform 0.2s;
+            border-radius: 10px;
         }
         .nav a:hover {
-            background-color: #4caf50;
+            background-color: #4CAF50;
+            transform: scale(1.05);
         }
         .content {
             padding: 20px;
@@ -45,95 +51,60 @@
             display: none;
             padding: 20px;
             background-color: white;
-            border-radius: 10px;
+            border-radius: 20px;
             margin: 20px auto;
             max-width: 600px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
         }
         input, button {
             margin: 5px;
-            padding: 10px;
+            padding: 12px;
             width: 80%;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        canvas {
-            background-color: white;
             border-radius: 10px;
-            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background-color: #388E3C;
+        }
+        .car-comparison {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+        }
+        .car-comparison .form-group {
+            width: 48%;
+        }
+        .result-text {
+            text-align: left;
+            font-size: 16px;
+            margin: 20px 0;
+        }
+        .home {
+            padding: 50px;
+            font-size: 24px;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 20px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
         }
     </style>
-    <script>
-        let budgetChart;
-        
-        function showSection(id) {
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            const section = document.getElementById(id);
-            if (section) {
-                section.style.display = 'block';
-            }
-        }
-
-        function calculateBudget() {
-            let categories = ['Nájem', 'Jídlo', 'Doprava', 'Energie', 'Volný čas', 'Spoření', 'Investice', 'Zdraví'];
-            let values = categories.map(cat => parseFloat(document.getElementById(cat.toLowerCase()).value) || 0);
-            let income = parseFloat(document.getElementById("income").value) || 0;
-            let expenses = values.reduce((a, b) => a + b, 0);
-            let balance = income - expenses;
-            document.getElementById("budgetResult").textContent = "Zůstatek: " + balance + " Kč";
-            
-            const ctx = document.getElementById('budgetChart').getContext('2d');
-            if (budgetChart) {
-                budgetChart.destroy();
-            }
-            budgetChart = new Chart(ctx, {
-                type: 'doughnut',
-                data: {
-                    labels: categories,
-                    datasets: [{
-                        data: values,
-                        backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A6', '#FFD700', '#00FFFF', '#FF4500', '#8A2BE2'],
-                        borderColor: '#000',
-                        borderWidth: 2,
-                        hoverOffset: 10
-                    }]
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: 'black',
-                                font: {
-                                    size: 14
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-        }
-
-        function calculateCarCost() {
-            let fuelCost = parseFloat(document.getElementById("fuel-cost").value) || 0;
-            let insurance = parseFloat(document.getElementById("insurance").value) || 0;
-            let maintenance = parseFloat(document.getElementById("maintenance").value) || 0;
-            let yearlyCost = fuelCost + insurance + maintenance;
-            document.getElementById("carCostResult").textContent = "Roční náklady na provoz auta: " + yearlyCost + " Kč";
-        }
-
-        function goToHomePage() {
-            document.querySelectorAll('.section').forEach(section => {
-                section.style.display = 'none';
-            });
-            document.getElementById("home").style.display = 'block';
-        }
-    </script>
 </head>
 <body>
-    <div class="header" onclick="goToHomePage()">
-        <img src="koskos.png" alt="KOSKOS Logo" class="logo">
+    <div class="header" onclick="showHomePage()">
         <h1>KOSKOS</h1>
     </div>
     <nav class="nav">
@@ -143,32 +114,204 @@
         <a href="#" onclick="showSection('chatbot')">AI Chatbot</a>
     </nav>
     <div class="content">
-        <div id="home" class="section" style="display: block;">
+        <div id="home" class="section home" style="display: none;">
             <h2>Do something different</h2>
         </div>
+
+        <!-- Budget Planner Section -->
         <div id="budget" class="section">
             <h2>Plánovač rozpočtu</h2>
-            <input type="number" id="income" placeholder="Celkové příjmy v Kč">
-            <input type="number" id="nájem" placeholder="Nájem v Kč">
-            <input type="number" id="jídlo" placeholder="Jídlo v Kč">
-            <input type="number" id="doprava" placeholder="Doprava v Kč">
-            <input type="number" id="energie" placeholder="Energie a služby v Kč">
-            <input type="number" id="volný čas" placeholder="Volný čas v Kč">
-            <input type="number" id="spoření" placeholder="Spoření v Kč">
-            <input type="number" id="investice" placeholder="Investice v Kč">
-            <input type="number" id="zdraví" placeholder="Zdraví v Kč">
-            <button onclick="calculateBudget()">Spočítat</button>
+            <div class="form-group">
+                <input type="number" id="income" placeholder="Celkové příjmy v Kč">
+                <input type="number" id="nájem" placeholder="Nájem v Kč">
+                <input type="number" id="jídlo" placeholder="Jídlo v Kč">
+                <input type="number" id="doprava" placeholder="Doprava v Kč">
+                <input type="number" id="energie" placeholder="Energie v Kč">
+                <input type="number" id="volný čas" placeholder="Volný čas v Kč">
+                <input type="number" id="spoření" placeholder="Spoření v Kč">
+                <input type="number" id="investice" placeholder="Investice v Kč">
+                <input type="number" id="zdraví" placeholder="Zdraví v Kč">
+                <button onclick="calculateBudget()">Spočítat</button>
+            </div>
             <p id="budgetResult"></p>
-            <canvas id="budgetChart" width="400" height="400"></canvas>
+            <canvas id="budgetChart"></canvas>
         </div>
+
+        <!-- Car Cost Comparison Section -->
         <div id="car-cost" class="section">
-            <h2>Kalkulačka provozu auta</h2>
-            <input type="number" id="fuel-cost" placeholder="Roční náklady na palivo v Kč">
-            <input type="number" id="insurance" placeholder="Pojištění v Kč">
-            <input type="number" id="maintenance" placeholder="Servis v Kč">
-            <button onclick="calculateCarCost()">Spočítat</button>
-            <p id="carCostResult"></p>
+            <h2>Kalkulačka provozu auta - Porovnání dvou aut</h2>
+            <div class="car-comparison">
+                <div class="form-group">
+                    <h3>Auto 1</h3>
+                    <input type="number" id="carPrice1" placeholder="Cena auta 1 v Kč">
+                    <input type="number" id="mileage1" placeholder="Počet kilometrů za měsíc pro auto 1">
+                    <input type="number" id="fuelCost1" placeholder="Cena za litr paliva nebo kWh pro auto 1">
+                    <input type="number" id="fuelEfficiency1" placeholder="Spotřeba auta 1 v litrech nebo kWh na 100 km">
+                    <input type="number" id="maintenance1" placeholder="Měsíční údržba auta 1">
+                    <input type="number" id="insurance1" placeholder="Cena pojištění auta 1 za měsíc">
+                </div>
+                <div class="form-group">
+                    <h3>Auto 2</h3>
+                    <input type="number" id="carPrice2" placeholder="Cena auta 2 v Kč">
+                    <input type="number" id="mileage2" placeholder="Počet kilometrů za měsíc pro auto 2">
+                    <input type="number" id="fuelCost2" placeholder="Cena za litr paliva nebo kWh pro auto 2">
+                    <input type="number" id="fuelEfficiency2" placeholder="Spotřeba auta 2 v litrech nebo kWh na 100 km">
+                    <input type="number" id="maintenance2" placeholder="Měsíční údržba auta 2">
+                    <input type="number" id="insurance2" placeholder="Cena pojištění auta 2 za měsíc">
+                </div>
+            </div>
+            <input type="number" id="years" placeholder="Počet let užívání auta" min="1" max="10">
+            <button onclick="compareCarCosts()">Spočítat náklady</button>
+
+            <div id="carCostResult" class="result-text">
+                <p id="totalCost1"></p>
+                <p id="totalCost2"></p>
+            </div>
+        </div>
+
+        <!-- Loan Payment Calculator Section -->
+        <div id="loan-calc" class="section">
+            <h2>Kalkulačka splátek</h2>
+            <div class="form-group">
+                <input type="number" id="loanAmount" placeholder="Výše půjčky v Kč">
+                <input type="number" id="interestRate" placeholder="Úroková sazba (%)">
+                <input type="number" id="loanTerm" placeholder="Doba splatnosti (v letech)">
+                <button onclick="calculateLoan()">Spočítat splátky</button>
+            </div>
+
+            <div id="loanResult" class="result-text">
+                <p id="monthlyPayment"></p>
+                <p id="totalPaid"></p>
+            </div>
+        </div>
+
+        <!-- AI Chatbot Section -->
+        <div id="chatbot" class="section">
+            <h2>AI Chatbot</h2>
+            <p>Vytvořím ti pomocníka, který ti bude pomáhat s tvými financemi! (Tento chatbot bude stále ve vývoji.)</p>
         </div>
     </div>
+
+    <script>
+        let budgetChart;
+
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+
+            const activeSection = document.getElementById(sectionId);
+            activeSection.style.display = 'block';
+        }
+
+        function showHomePage() {
+            const sections = document.querySelectorAll('.section');
+            sections.forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById('home').style.display = 'block';
+        }
+
+        function calculateBudget() {
+            const income = parseFloat(document.getElementById('income').value) || 0;
+            const rent = parseFloat(document.getElementById('nájem').value) || 0;
+            const food = parseFloat(document.getElementById('jídlo').value) || 0;
+            const transport = parseFloat(document.getElementById('doprava').value) || 0;
+            const utilities = parseFloat(document.getElementById('energie').value) || 0;
+            const leisure = parseFloat(document.getElementById('volný čas').value) || 0;
+            const savings = parseFloat(document.getElementById('spoření').value) || 0;
+            const investments = parseFloat(document.getElementById('investice').value) || 0;
+            const health = parseFloat(document.getElementById('zdraví').value) || 0;
+
+            // Vytváření seznamu výdajů pro každou kategorii
+            const expenses = {
+                'Nájem': rent,
+                'Jídlo': food,
+                'Doprava': transport,
+                'Energie': utilities,
+                'Volný čas': leisure,
+                'Spoření': savings,
+                'Investice': investments,
+                'Zdraví': health
+            };
+
+            // Výpočet celkových výdajů a zůstatku
+            const totalExpenses = rent + food + transport + utilities + leisure + savings + investments + health;
+            const balance = income - totalExpenses;
+
+            // Výsledek výdajů
+            document.getElementById('budgetResult').textContent = `Výdaje: ${totalExpenses.toFixed(2)} Kč, Zůstatek: ${balance.toFixed(2)} Kč`;
+
+            // Aktualizace grafu
+            if (budgetChart) budgetChart.destroy(); // Zničí předchozí graf, pokud existuje
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+
+            // Příprava dat pro graf
+            const labels = Object.keys(expenses);
+            const data = Object.values(expenses);
+
+            // Vytvoření nového koláčového grafu s jednotlivými kategoriemi
+            budgetChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Výdaje podle kategorií',
+                        data: data,
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#FF9F40', '#FFCD56', '#6B8E23', '#C71585'
+                        ]
+                    }]
+                }
+            });
+        }
+
+        // Car cost comparison function
+        function compareCarCosts() {
+            const carPrice1 = parseFloat(document.getElementById('carPrice1').value) || 0;
+            const mileage1 = parseFloat(document.getElementById('mileage1').value) || 0;
+            const fuelCost1 = parseFloat(document.getElementById('fuelCost1').value) || 0;
+            const fuelEfficiency1 = parseFloat(document.getElementById('fuelEfficiency1').value) || 0;
+            const maintenance1 = parseFloat(document.getElementById('maintenance1').value) || 0;
+            const insurance1 = parseFloat(document.getElementById('insurance1').value) || 0;
+
+            const carPrice2 = parseFloat(document.getElementById('carPrice2').value) || 0;
+            const mileage2 = parseFloat(document.getElementById('mileage2').value) || 0;
+            const fuelCost2 = parseFloat(document.getElementById('fuelCost2').value) || 0;
+            const fuelEfficiency2 = parseFloat(document.getElementById('fuelEfficiency2').value) || 0;
+            const maintenance2 = parseFloat(document.getElementById('maintenance2').value) || 0;
+            const insurance2 = parseFloat(document.getElementById('insurance2').value) || 0;
+
+            const years = parseFloat(document.getElementById('years').value) || 0;
+
+            // Calculate monthly fuel cost and total costs
+            const fuelCostPerMonth1 = (mileage1 / 100) * fuelEfficiency1 * fuelCost1;
+            const fuelCostPerMonth2 = (mileage2 / 100) * fuelEfficiency2 * fuelCost2;
+
+            const totalCost1 = (fuelCostPerMonth1 + maintenance1 + insurance1) * 12 * years + carPrice1;
+            const totalCost2 = (fuelCostPerMonth2 + maintenance2 + insurance2) * 12 * years + carPrice2;
+
+            document.getElementById('totalCost1').textContent = `Celkové náklady na auto 1: ${totalCost1.toFixed(2)} Kč`;
+            document.getElementById('totalCost2').textContent = `Celkové náklady na auto 2: ${totalCost2.toFixed(2)} Kč`;
+        }
+
+        // Loan calculator function
+        function calculateLoan() {
+            const loanAmount = parseFloat(document.getElementById('loanAmount').value) || 0;
+            const interestRate = parseFloat(document.getElementById('interestRate').value) || 0;
+            const loanTerm = parseFloat(document.getElementById('loanTerm').value) || 0;
+
+            const monthlyInterestRate = interestRate / 100 / 12;
+            const numberOfPayments = loanTerm * 12;
+
+            // Monthly payment calculation
+            const monthlyPayment = (loanAmount * monthlyInterestRate) / (1 - Math.pow(1 + monthlyInterestRate, -numberOfPayments));
+            const totalPaid = monthlyPayment * numberOfPayments;
+
+            document.getElementById('monthlyPayment').textContent = `Měsíční splátka: ${monthlyPayment.toFixed(2)} Kč`;
+            document.getElementById('totalPaid').textContent = `Celková částka zaplacená: ${totalPaid.toFixed(2)} Kč`;
+        }
+    </script>
 </body>
 </html>
