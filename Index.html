@@ -4,32 +4,171 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KOSKOS</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: black;
-        }
-        .container {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
             text-align: center;
+        }
+        .header {
+            background-color: #2e7d32;
+            padding: 20px;
             color: white;
+            cursor: pointer;
         }
         .logo {
             max-width: 200px;
         }
-        h1 {
-            font-size: 2rem;
-            margin-top: 20px;
+        .nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            padding: 10px;
+            background-color: #388e3c;
+        }
+        .nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            transition: background 0.3s;
+        }
+        .nav a:hover {
+            background-color: #4caf50;
+        }
+        .content {
+            padding: 20px;
+        }
+        .section {
+            display: none;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            margin: 20px auto;
+            max-width: 600px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        input, button {
+            margin: 5px;
+            padding: 10px;
+            width: 80%;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        canvas {
+            background-color: white;
+            border-radius: 10px;
+            padding: 10px;
         }
     </style>
+    <script>
+        let budgetChart;
+        
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            const section = document.getElementById(id);
+            if (section) {
+                section.style.display = 'block';
+            }
+        }
+
+        function calculateBudget() {
+            let categories = ['Nájem', 'Jídlo', 'Doprava', 'Energie', 'Volný čas', 'Spoření', 'Investice', 'Zdraví'];
+            let values = categories.map(cat => parseFloat(document.getElementById(cat.toLowerCase()).value) || 0);
+            let income = parseFloat(document.getElementById("income").value) || 0;
+            let expenses = values.reduce((a, b) => a + b, 0);
+            let balance = income - expenses;
+            document.getElementById("budgetResult").textContent = "Zůstatek: " + balance + " Kč";
+            
+            const ctx = document.getElementById('budgetChart').getContext('2d');
+            if (budgetChart) {
+                budgetChart.destroy();
+            }
+            budgetChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: categories,
+                    datasets: [{
+                        data: values,
+                        backgroundColor: ['#FF5733', '#33FF57', '#3357FF', '#FF33A6', '#FFD700', '#00FFFF', '#FF4500', '#8A2BE2'],
+                        borderColor: '#000',
+                        borderWidth: 2,
+                        hoverOffset: 10
+                    }]
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: 'black',
+                                font: {
+                                    size: 14
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function calculateCarCost() {
+            let fuelCost = parseFloat(document.getElementById("fuel-cost").value) || 0;
+            let insurance = parseFloat(document.getElementById("insurance").value) || 0;
+            let maintenance = parseFloat(document.getElementById("maintenance").value) || 0;
+            let yearlyCost = fuelCost + insurance + maintenance;
+            document.getElementById("carCostResult").textContent = "Roční náklady na provoz auta: " + yearlyCost + " Kč";
+        }
+
+        function goToHomePage() {
+            document.querySelectorAll('.section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.getElementById("home").style.display = 'block';
+        }
+    </script>
 </head>
 <body>
-    <div class="container">
-        <img src="logo.png" alt="KOSKOS Logo" class="logo">
+    <div class="header" onclick="goToHomePage()">
+        <img src="koskos.png" alt="KOSKOS Logo" class="logo">
         <h1>KOSKOS</h1>
+    </div>
+    <nav class="nav">
+        <a href="#" onclick="showSection('budget')">Plánovač rozpočtu</a>
+        <a href="#" onclick="showSection('car-cost')">Kalkulačka provozu auta</a>
+        <a href="#" onclick="showSection('loan-calc')">Kalkulačka splátek</a>
+        <a href="#" onclick="showSection('chatbot')">AI Chatbot</a>
+    </nav>
+    <div class="content">
+        <div id="home" class="section" style="display: block;">
+            <h2>Do something different</h2>
+        </div>
+        <div id="budget" class="section">
+            <h2>Plánovač rozpočtu</h2>
+            <input type="number" id="income" placeholder="Celkové příjmy v Kč">
+            <input type="number" id="nájem" placeholder="Nájem v Kč">
+            <input type="number" id="jídlo" placeholder="Jídlo v Kč">
+            <input type="number" id="doprava" placeholder="Doprava v Kč">
+            <input type="number" id="energie" placeholder="Energie a služby v Kč">
+            <input type="number" id="volný čas" placeholder="Volný čas v Kč">
+            <input type="number" id="spoření" placeholder="Spoření v Kč">
+            <input type="number" id="investice" placeholder="Investice v Kč">
+            <input type="number" id="zdraví" placeholder="Zdraví v Kč">
+            <button onclick="calculateBudget()">Spočítat</button>
+            <p id="budgetResult"></p>
+            <canvas id="budgetChart" width="400" height="400"></canvas>
+        </div>
+        <div id="car-cost" class="section">
+            <h2>Kalkulačka provozu auta</h2>
+            <input type="number" id="fuel-cost" placeholder="Roční náklady na palivo v Kč">
+            <input type="number" id="insurance" placeholder="Pojištění v Kč">
+            <input type="number" id="maintenance" placeholder="Servis v Kč">
+            <button onclick="calculateCarCost()">Spočítat</button>
+            <p id="carCostResult"></p>
+        </div>
     </div>
 </body>
 </html>
